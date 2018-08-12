@@ -1,1 +1,9 @@
-2.objetivo final = 
+Documento - MAC0215
+Gabriel Araujo - 10297689
+
+Supervisor: Roberto Hirata. Contato: hirata@ime.usp.br
+Objetivo final do Projeto: O objetivo final é o desenvolvimento de otimizações na identificação de objetos em centros urbanos, em específico vegetações e suas interações com o ambiente. 
+Etapas para alcançar o objetivo: O projeto será feito ao longo do semestre com reuniões semanais entre os membros da equipe (sexta-feira à tarde), feitas para discutir o progresso atual e o eventuais problemas de desenvolvimento. A parte da programação individual, também será feito o estudo individual sobre redes neurais e deep learning.
+Cronograma: 8 horas dedicadas ao projeto por semana, totalizando ~114 horas neste semestre. Essas sendo: duas horas de estudo semanal em relação ao tópico, no mínimo quatro horas de programação do projeto individualmente (na área que for solicitada pelo supervisor), em torno de outras duas horas gastas nas reuniões semanais da equipe, e de meia a uma hora para o desenvolvimento dos relatórios semanas.
+Acompanhamento do projeto: O projeto poderá ser visto com suas atualizações nesse Github: https://github.com/arturandre/INACITY, e também no site: http://inacity.azurewebsites.net. Meus relatórios semanais do progresso feito estarão disponíveis em: https://github.com/Ga-briel/IC.
+
