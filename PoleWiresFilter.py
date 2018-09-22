@@ -1,44 +1,62 @@
 #imports from Keras package
-from keras.models import model_from_json
+from keras.models import Sequential
 from keras.layers import Conv2D
 from keras.layers import MaxPooling2D
 from keras.layers import Flatten
 from keras.layers import Dense
+from keras.models import model_from_json
 ##
-from django_website.Primitives.GeoImage import GeoImage
-from matplotlib import pyplot as plt
+import numpy as np
+#Based on Keras deep learning package
+def processImage():
+    classifier = Sequential()
+    classifier.add(Conv2D(32, (3, 3), input_shape = (64, 64, 3), activation = 'relu'))
+    classifier.add(MaxPooling2D(pool_size = (2, 2)))
+    classifier.add(Conv2D(32, (3, 3), activation = 'relu'))
+    classifier.add(MaxPooling2D(pool_size = (2, 2)))
+    classifier.add(Flatten())
+    classifier.add(Dense(units = 128, activation = 'relu'))
+    classifier.add(Dense(units = 1, activation = 'sigmoid'))
+    classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
-class PoleWiresFilter(ImageFilter):
-    #Based on Keras deep learning package
-    filterName = "PoleWires"
-    filterId = "PoleWires"
+    from keras.preprocessing.image import ImageDataGenerator
 
-    def _initialize(cls):
-        pass
-    def processImage(geoImage: GeoImage):
+    train_datagen = ImageDataGenerator(rescale = 1./255,shear_range = 0.2,zoom_range = 0.2,horizontal_flip = True)
+    valid_datagen = ImageDataGenerator(rescale = 1./255)
+    test_datagen = ImageDataGenerator(rescale = 1./255)
+    #size = 1002
+    training_set = train_datagen.flow_from_directory('training_set',
+    target_size = (64, 64),
+    batch_size = 6,
+    class_mode = 'binary')
+    #size = 261
+    validation_set = valid_datagen.flow_from_directory('validation_set',
+    target_size = (64, 64),
+    batch_size = 9,
+    class_mode = 'binary')
+    #size = 323
+    test_set = test_datagen.flow_from_directory('test_set',
+    target_size = (64, 64),
+    batch_size = 19,
+    class_mode = 'binary')
 
-        json_file = open('model.json', 'r')
-        loaded_model_json = json_file.read()
-        json_file.close()
-        loaded_model = model_from_json(loaded_model_json)
-        # load weights into new model
-        loaded_model.load_weights("model.h5")
+    classifier.fit_generator(training_set,
+    steps_per_epoch = 501,
+    epochs = 15,
+    validation_data = validation_set,
+    validation_steps = 130)
 
-        #test
-        from keras.preprocessing import image
-        #test_image = geoImage.data
-        from PIL import Image
-        #transformaçao da matriz em imagem
-        entry = geoImage.data
-        img = Image.fromarray(entry)
-        
-        test_image = image.load_img(img, target_size = (64,64))
-        test_image = image.img_to_array(test_image)
-        test_image = np.expand_dims(test_image, axis = 0)
-        result = loaded_model.predict(test_image)
-        training_set.class_indices
-        if result[0][0] == 1:
-            prediction = np.ones(640, 640)
-        else:
-            prediction = np.ones(640, 640)
-        return prediction
+    classifier.evaluate_generator(generator=validation_set)
+
+    #test set
+    test_set.reset()
+    prediction = classifier.predict_generator(test_set,verbose=1)
+
+    #saving classifier
+    model_json = classifier.to_json()
+    with open("model.json", "w") as json_file:
+        json_file.write(model_json)
+    classifier.save_weights("model.h5")
+    print("Model saved")
+
+processImage()
